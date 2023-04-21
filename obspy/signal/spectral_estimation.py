@@ -1826,7 +1826,7 @@ class PPSD(object):
              max_percentage=None, period_lim=(0.01, 179), show_mode=False,
              show_mean=False, cmap=obspy_sequential, cumulative=False,
              cumulative_number_of_colors=20, xaxis_frequency=False,
-             show_earthquakes=None):
+             show_earthquakes=None, subfig=None):
         """
         Plot the 2D histogram of the current PPSD.
         If a filename is specified the plot is saved to this file, otherwise
@@ -1898,10 +1898,16 @@ class PPSD(object):
         :type xaxis_frequency: bool
         :param xaxis_frequency: If set to `True`, the x axis will be frequency
             in Hertz as opposed to the default of period in seconds.
+        :type subfig: :class: 'matplotlib.figure.SubFigure', optional
+        :param subfig: Could be used to provide a subplot figure to plot multiple
+            figures using matplotlib.figure.Figure.subfigures at one image.
         """
         import matplotlib.pyplot as plt
         self.__check_histogram()
-        fig = plt.figure()
+        if not subfig:
+            fig = plt.figure()
+        else:
+            fig = subfig
         fig.ppsd = AttribDict()
 
         if show_coverage:
