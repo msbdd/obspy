@@ -234,9 +234,17 @@ def _get_cmap(file_name, lut=None, reverse=False):
     file_path = Path(file_name)
     name = str(file_path.parent / file_path.stem)
     suffix = file_path.suffix
-    directory = Path(inspect.getfile(
-                                    inspect.currentframe()))
-    directory = directory.resolve().parent / "data"
+    import sys
+    import os
+    if getattr(sys, 'frozen', False):
+        directory = (
+            Path(os.path.dirname(sys.executable))
+            / "lib" / "obspy" / "imaging" / "data"
+        )
+    else:
+        directory = Path(inspect.getfile(
+                                        inspect.currentframe()))
+        directory = directory.resolve().parent / "data"
     full_path = directory / file_name
     # check if it is npz -> segmented colormap or npy -> listed colormap
     # do it like matplotlib, append "_r" to reverted versions
@@ -276,9 +284,20 @@ def _get_all_cmaps():
     :rtype: dict
     """
     cmaps = {}
-    cm_file_pattern = Path(inspect.getfile(
-                                            inspect.currentframe()))
-    cm_file_pattern = str(cm_file_pattern.parent.resolve()/"data" / "*.np[yz]")
+    import sys
+    import os
+    if getattr(sys, 'frozen', False):
+        data_dir = (
+            Path(os.path.dirname(sys.executable))
+            / "lib" / "obspy" / "imaging" / "data"
+        )
+        cm_file_pattern = str(data_dir / "*.np[yz]")
+    else:
+        cm_file_pattern = Path(inspect.getfile(
+                                                inspect.currentframe()))
+        cm_file_pattern = (
+            str(cm_file_pattern.parent.resolve()/"data" / "*.np[yz]")
+        )
     for filename in glob.glob(cm_file_pattern):
         filename = Path(filename).name
         for reverse in (True, False):
